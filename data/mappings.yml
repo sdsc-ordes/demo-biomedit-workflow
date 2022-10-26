@@ -1,0 +1,61 @@
+prefixes:
+  sphn: https://biomedit.ch/rdf/sphn-ontology/sphn#
+  syn: https://github.com/synthetichealth/synthea/
+
+sources:
+  patients:
+    access: patients.json
+    referenceFormulation: jsonpath
+    iterator: "$[*].entry[?(@.resource.resourceType=='Patient')]"
+  organizations:
+    access: patients.json
+    referenceFormulation: jsonpath
+    iterator: "$[*].entry[?(@.resource.resourceType=='Organization')]"
+  encounters:
+    access: patients.json
+    referenceFormulation: jsonpath
+    iterator: "$[*].entry[?(@.resource.resourceType=='Encounter')]"
+
+mappings:
+  patient:
+    source:
+      - patients
+    s: $(fullUrl)
+    po:
+      - [a, sphn:SubjectPseudoIdentifier]
+      - [sphn:has_identifier, $(resource.id)]
+
+  organization:
+    source:
+      - organizations
+    s: $(fullUrl)
+    po:
+      - [a, sphn:DataProviderInstitute]
+      - [sphn:has_code, $(resource.id)]
+
+  encounter:
+    source:
+      - encounters
+    s: $(fullUrl)
+    po:
+      - [a, sphn:HealthcareEncounter]
+      - [sphn:has_identifier, $(resource.id)]
+      - [sphn:has_start_date_time, $(resource.period.start)]
+      - [sphn:has_end_date_time, $(resource.period.end)]
+      - p: sphn:has_subject_pseudo_identifier
+        o:
+         - mapping: patient
+           condition:
+             function: equal
+             parameters:
+               - [str1, $(resource.subject.reference), s]
+               - [str2, $(fullUrl)]
+      - p: sphn:has_data_provider_institute
+        o:
+         - mapping: organization
+           condition:
+            function: equal
+            parameters:
+              - [str1, $(resource.serviceProvider.reference), s]
+              - [str2, $(fullUrl), o]
+
