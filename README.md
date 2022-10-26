@@ -10,16 +10,17 @@ It is designed to run on biomedical systems with the following restrictions:
 * No root access
 * keep data provenance information separate from the git repository
 
-## Containerization
+## Containerized workflow
 
 The project is structured to run entirely inside podman with modular containers.
 The main workflow uses Nextflow inside podman, and each workflow task uses podman-in-podman to run in its own (single-program) container.
 
-The repository is mounted in the Nextflow container, and Nextflow is responsible for managing the containers and mounting the volume for each task.
+The repository is mounted in the Nextflow container, and Nextflow is responsible for managing the containers and mounting the volume for each task. This modular layout, allows to easily reuse task containers across projects (as opposed to building a single container with nextflow and all dependencies for each project).
+
 
 ```mermaid
     C4Context
-      title Container organization
+      title Containerized workflow architecture
       Boundary(b0, "BioMedIT", "SERVER") {
         Person(User, "User", "make run")
         SystemDb(Repo, "Repository.")
@@ -79,6 +80,23 @@ The workflow processes simulated patient data from synthea in JSON format and ge
 The data is semantized using the [SPHN ontology](https://www.biomedit.ch/rdf/sphn-ontology). Mapping rules are defined in human readable [YARRRML format](https://rml.io/yarrrml/) (see `data/mappings.yml`). The triples are materialized using containerized tools from [rml.io](https://rml.io).
 
 The workflow definition can be found in [workflow/main.nf](workflow/main.nf) and its configuration in [workflow/nextflow.config](workflow/nextflow.config).
+
+```mermaid
+flowchart TD
+    p0(( ))
+    p1[concat_patients_json]
+    p2(( ))
+    p3[convert_mappings]
+    p4[generate_triples]
+    p5[cat_gz_triples]
+    p6(( ))
+    p0 -->|json_dir| p1
+    p1 --> p4
+    p2 -->|yml_mappings| p3
+    p3 --> p4
+    p4 --> p5
+    p5 --> p6
+```
 
 ## Usage
 
