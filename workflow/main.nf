@@ -34,7 +34,6 @@ process concat_patients_json {
 
 // Convert human-readable yarrrml mappings to machine-readable ttl
 process convert_mappings {
-    container "$params.registry/rmlio/yarrrml-parser:latest"
 
     input: path yml_mappings
     output: path 'mappings.rml.ttl'
@@ -47,7 +46,6 @@ process convert_mappings {
 
 // Use mappings to create patients RDF graph from json file
 process generate_triples {
-    container "$params.registry/rmlio/rmlstreamer:2.4.1"
 
     input:
     path patients
