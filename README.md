@@ -15,26 +15,28 @@ It is designed to run on biomedical systems with the following restrictions:
 The project is structured to run entirely inside podman with modular containers.
 The main workflow uses Nextflow inside podman, and each workflow task uses podman-in-podman to run in its own (single-program) container.
 
+The repository is mounted in the Nextflow container, and Nextflow is responsible for managing the containers and mounting the volume for each task.
+
 ```mermaid
     C4Context
       title Container organization
       Boundary(b0, "BioMedIT", "SERVER") {
-        Person(User, "User", "make nextflow")
+        Person(User, "User", "make run")
         SystemDb(Repo, "Repository.")
 
         Boundary(b1, "podman-nextflow", "CONTAINER") {
 
-          SystemDb_Ext(RepoMount1, "/repo", "Mountpoint for the repository and workdir.")
+          SystemDb_Ext(RepoMount1, "/repo", "mountpoint + workdir.")
           System(Nextflow, "Nextflow", "Nextflow workflow system.")
 
           Boundary(t1, "Task 1 container", "CONTAINER") {
             System(Software1, "Software 1")
-            SystemDb_Ext(RepoMount21, "/repo", "Mountpoint for the repository and workdir.")
+            SystemDb_Ext(RepoMount21, "/repo", "mountpoint + workdir.")
           }
 
           Boundary(t2, "Task 2 container", "CONTAINER") {
             System(Software2, "Software 2")
-            SystemDb_Ext(RepoMount22, "/repo", "Mountpoint for the repository and workdir.")
+            SystemDb_Ext(RepoMount22, "/repo", "mountpoint + workdir.")
           }
 
         }
@@ -43,9 +45,9 @@ The main workflow uses Nextflow inside podman, and each workflow task uses podma
 
       Rel(User, Repo, "workdir")
 
-      Rel(Repo, RepoMount1, "Mounts")
-      Rel(RepoMount1, RepoMount21, "Mounts")
-      Rel(RepoMount1, RepoMount22, "Mounts")
+      Rel(Repo, RepoMount1, "mounts")
+      Rel(RepoMount1, RepoMount21, "mounts")
+      Rel(RepoMount1, RepoMount22, "mounts")
 
       Rel(User, Nextflow, "calls")
       Rel(Nextflow, Software1, "calls")
@@ -54,14 +56,14 @@ The main workflow uses Nextflow inside podman, and each workflow task uses podma
       BiRel(Software2, RepoMount22, "I/O")
       BiRel(Software1, RepoMount21, "I/O")
 
-      UpdateRelStyle(User, Repo, $textColor="blue", $lineColor="blue", $offsetX="5")
-      UpdateRelStyle(Repo, RepoMount1, $textColor="blue", $lineColor="blue", $offsetY="-10")
-      UpdateRelStyle(RepoMount1, RepoMount21, $textColor="blue", $lineColor="blue", $offsetY="-10")
-      UpdateRelStyle(RepoMount1, RepoMount22, $textColor="blue", $lineColor="blue", $offsetY="-10")
+      UpdateRelStyle(User, Repo, $textColor="blue", $lineColor="blue", $offsetX="-10", $offsetY="10")
+      UpdateRelStyle(Repo, RepoMount1, $textColor="blue", $lineColor="blue", $offsetX="-30", $offsetY="-10")
+      UpdateRelStyle(RepoMount1, RepoMount21, $textColor="blue", $lineColor="blue", $offsetX="-100", $offsetY="-10")
+      UpdateRelStyle(RepoMount1, RepoMount22, $textColor="blue", $lineColor="blue", $offsetX="-80", $offsetY="-30")
 
-      UpdateRelStyle(User, Nextflow, $textColor="red", $lineColor="red")
-      UpdateRelStyle(Nextflow, Software1, $textColor="red", $lineColor="red")
-      UpdateRelStyle(Nextflow, Software2, $textColor="red", $lineColor="red")
+      UpdateRelStyle(User, Nextflow, $textColor="red", $lineColor="red", $offsetX="40", $offsetY="40")
+      UpdateRelStyle(Nextflow, Software1, $textColor="red", $lineColor="red", $offsetY="-40")
+      UpdateRelStyle(Nextflow, Software2, $textColor="red", $lineColor="red", $offsetX="-60", $offsetY="-40")
 
 
       UpdateRelStyle(Nextflow, User, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
