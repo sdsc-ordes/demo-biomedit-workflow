@@ -22,8 +22,8 @@ The repository is mounted in the Nextflow container, and Nextflow is responsible
     C4Context
       title Containerized workflow architecture
       Boundary(b0, "BioMedIT", "SERVER") {
-        Person(User, "User", "make run")
         SystemDb(Repo, "Repository.")
+        Person(User, "User", "make run")
 
         Boundary(b1, "podman-nextflow", "CONTAINER") {
 
@@ -31,13 +31,13 @@ The repository is mounted in the Nextflow container, and Nextflow is responsible
           System(Nextflow, "Nextflow", "Nextflow workflow system.")
 
           Boundary(t1, "Task 1 container", "CONTAINER") {
-            System(Software1, "Software 1")
             SystemDb_Ext(RepoMount21, "/repo", "mountpoint + workdir.")
+            System(Software1, "Software 1")
           }
 
           Boundary(t2, "Task 2 container", "CONTAINER") {
-            System(Software2, "Software 2")
             SystemDb_Ext(RepoMount22, "/repo", "mountpoint + workdir.")
+            System(Software2, "Software 2")
           }
 
         }
@@ -69,7 +69,7 @@ The repository is mounted in the Nextflow container, and Nextflow is responsible
 
       UpdateRelStyle(Nextflow, User, $textColor="red", $lineColor="red")
 
-      UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="2")
+      UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
 
 ```
 
