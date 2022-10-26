@@ -1,0 +1,14 @@
+flowchart TD
+    p0(( ))
+    p1[concat_patients_json]
+    p2(( ))
+    p3[convert_mappings]
+    p4[generate_triples]
+    p5[cat_gz_triples]
+    p6(( ))
+    p0 -->|json_dir| p1
+    p1 --> p4
+    p2 -->|yml_mappings| p3
+    p3 --> p4
+    p4 --> p5
+    p5 --> p6
