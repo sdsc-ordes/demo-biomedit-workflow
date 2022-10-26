@@ -16,7 +16,7 @@ get_in: clean
 # Execute nextflow pipeline in a podman container
 run: clean
 	$(POD_RUN) podman-nextflow:latest
-	$(POD_EXE) nextflow run workflow/main.nf
+	$(POD_EXE) nextflow run main.nf
 	$(POD_RM)
 
 # Clean existing workflow container from previous run
