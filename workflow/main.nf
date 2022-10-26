@@ -1,8 +1,9 @@
 #!usr/bin/env nextflow
 
-params.input_dir = 'data/synthea_patients_FHIR_STU3/fhir_stu3/'
-params.yml_mappings = 'data/mappings.yml'
-params.output_dir = 'data/FHIR_STU3_graph/'
+
+input_dir = file(params.input_dir)
+output_dir = file(params.output_dir)
+yml_mappings = file(params.yml_mappings )
 
 // This process concatenates all the patients JSON files into a single file:
 // jq version (does not support streaming)
@@ -33,20 +34,20 @@ process concat_patients_json {
 
 // Convert human-readable yarrrml mappings to machine-readable ttl
 process convert_mappings {
-    container 'docker.io/rmlio/yarrrml-parser:latest'
+    container "$params.registry/rmlio/yarrrml-parser:latest"
 
-    input: path yml
+    input: path yml_mappings
     output: path 'mappings.rml.ttl'
 
     script:
     """
-    yarrrml-parser -i $yml -o mappings.rml.ttl
+    yarrrml-parser -i $yml_mappings -o mappings.rml.ttl
     """
 }
 
 // Use mappings to create patients RDF graph from json file
 process generate_triples {
-    container 'docker.io/rmlio/rmlstreamer:2.4.1'
+    container "$params.registry/rmlio/rmlstreamer:2.4.1"
 
     input:
     path patients
@@ -57,8 +58,11 @@ process generate_triples {
 
     script:
     """
-    # rmlstreamer needs absolute paths...
+    # symlink does not work since the mapping contains
+    # relative source paths
     cp --remove-destination \$(readlink $rml) $rml
+
+    # rmlstreamer needs absolute paths...
     java -jar /opt/app/RMLStreamer.jar toFile \
         -m \${PWD}/$rml \
         -o \${PWD}/patients_graph
@@ -67,7 +71,7 @@ process generate_triples {
 
 // Combine RDF graph partitions into a single compressed file
 process cat_gz_triples {
-    publishDir $params.output_dir, mode: 'copy'
+    publishDir "data/out", mode: 'copy'
 
     input:
     path nt
@@ -85,11 +89,9 @@ process cat_gz_triples {
 }
 
 workflow {
-    yml_ch = Channel.fromPath(params.yml_mappings)
-    json_dir_ch = Channel.fromPath(params.input_dir)
     generate_triples(
-        concat_patients_json(json_dir_ch),
-        convert_mappings(yml_ch)
+        concat_patients_json(input_dir),
+        convert_mappings(yml_mappings)
     ) \
     | cat_gz_triples
 }
