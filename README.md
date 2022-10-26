@@ -79,7 +79,7 @@ The workflow processes simulated patient data from synthea in JSON format and ge
 
 The data is semantized using the [SPHN ontology](https://www.biomedit.ch/rdf/sphn-ontology). Mapping rules are defined in human readable [YARRRML format](https://rml.io/yarrrml/) (see `data/mappings.yml`). The triples are materialized using containerized tools from [rml.io](https://rml.io).
 
-The workflow definition can be found in [workflow/main.nf](workflow/main.nf) and its configuration in [workflow/nextflow.config](workflow/nextflow.config).
+The workflow definition can be found in [main.nf](main.nf) and its configuration in [nextflow.config](nextflow.config).
 
 ```mermaid
 flowchart TD
