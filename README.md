@@ -56,17 +56,17 @@ The repository is mounted in the Nextflow container, and Nextflow is responsible
       BiRel(Software2, RepoMount22, "I/O")
       BiRel(Software1, RepoMount21, "I/O")
 
-      UpdateRelStyle(User, Repo, $textColor="blue", $lineColor="blue", $offsetX="-10", $offsetY="10")
-      UpdateRelStyle(Repo, RepoMount1, $textColor="blue", $lineColor="blue", $offsetX="-30", $offsetY="-10")
-      UpdateRelStyle(RepoMount1, RepoMount21, $textColor="blue", $lineColor="blue", $offsetX="-100", $offsetY="-10")
-      UpdateRelStyle(RepoMount1, RepoMount22, $textColor="blue", $lineColor="blue", $offsetX="-80", $offsetY="-30")
+      UpdateRelStyle(User, Repo, $textColor="blue", $lineColor="blue")
+      UpdateRelStyle(Repo, RepoMount1, $textColor="blue", $lineColor="blue")
+      UpdateRelStyle(RepoMount1, RepoMount21, $textColor="blue", $lineColor="blue")
+      UpdateRelStyle(RepoMount1, RepoMount22, $textColor="blue", $lineColor="blue")
 
-      UpdateRelStyle(User, Nextflow, $textColor="red", $lineColor="red", $offsetX="40", $offsetY="40")
-      UpdateRelStyle(Nextflow, Software1, $textColor="red", $lineColor="red", $offsetY="-40")
-      UpdateRelStyle(Nextflow, Software2, $textColor="red", $lineColor="red", $offsetX="-60", $offsetY="-40")
+      UpdateRelStyle(User, Nextflow, $textColor="red", $lineColor="red")
+      UpdateRelStyle(Nextflow, Software1, $textColor="red", $lineColor="red")
+      UpdateRelStyle(Nextflow, Software2, $textColor="red", $lineColor="red")
 
 
-      UpdateRelStyle(Nextflow, User, $textColor="red", $lineColor="red", $offsetX="-50", $offsetY="20")
+      UpdateRelStyle(Nextflow, User, $textColor="red", $lineColor="red")
 
       UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="2")
 
