@@ -69,7 +69,7 @@ The repository is mounted in the Nextflow container, and Nextflow is responsible
 
       UpdateRelStyle(Nextflow, User, $textColor="red", $lineColor="red")
 
-      UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="1")
+      UpdateLayoutConfig($c4ShapeInRow="2", $c4BoundaryInRow="2")
 
 ```
 
