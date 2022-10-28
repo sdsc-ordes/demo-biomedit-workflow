@@ -31,7 +31,7 @@ run: log
 # Start a background logging process in the container
 log: start
 	$(eval LOG_FILE := $(shell date -u +%Y%m%dT%H-%M-%S).log)
-	$(POD_EXE) ./scripts/logger.sh $(LOG_PORT) $(LOG_FILE) &
+	$(POD_EXE) ./scripts/capture_weblog.sh $(LOG_PORT) $(LOG_FILE) &
 
 # Restart the container
 start: clean
