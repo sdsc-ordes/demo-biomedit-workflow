@@ -103,4 +103,9 @@ flowchart TD
 Commands to interact with the workflow are written as Makefile rules (see the [Makefile](Makefile)):
 * `make run`: Starts the nextflow container and runs the workflow inside.
 * `make get_in`: Starts the nextflow container and opens an interactive shell inside.
-* `make clean`: Deletes any previous instance of the container (named `wf-container`).
+
+The Makefile also contains command to manage podman images:
+* `make push`: Pushes the workflow image to configured registry
+* `make wf_img`: Builds the workflow image
+
+All other rules are called automatically by those described above.
