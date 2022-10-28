@@ -9,10 +9,12 @@ WF_CTNR = "wf-container"
 # Container port used for logging
 LOG_PORT = 31212
 LOG_DIR = "logs"
+# Mount point path for pwd in containers
+MNT="/repo"
 
 ### Containerized commands
 # Creates the detached (bakground) container used for workflows
-POD_RUN = podman run -dt --name $(WF_CTNR) --privileged -v $(PWD):/repo:Z -w /repo --user root
+POD_RUN = podman run -dt --name $(WF_CTNR) --privileged -v $(PWD):$(MNT):Z -w $(MNT) --user root
 # Executes a single command in the detached workflow container
 POD_EXE = podman exec $(WF_CTNR)
 # Delete the detached workflow container
@@ -27,7 +29,7 @@ get_in:
 run: log
 	$(POD_EXE) nextflow run \
 		-with-weblog http://localhost:31212 \
-		main.nf
+		$(MNT)/main.nf
 
 # Start a background logging process in the container
 log: start
