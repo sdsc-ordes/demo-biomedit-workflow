@@ -16,8 +16,6 @@ if ! [[ "$PORT" =~ ^[0-9]+$ ]] ;
     exit 1
 fi
 
-echo "socat TCP4-LISTEN:${PORT} file:${TMP},create"
-echo "sed '1,/^$/d' ${TMP} > ${OUT}"
 socat TCP4-LISTEN:${PORT} file:${TMP},create && \
     sed '1,/^\r\{0,1\}$/d' ${TMP} > ${OUT} && \
     rm ${TMP}
