@@ -4,6 +4,7 @@
 
 # Usage: ./logger.sh 31212 my.log
 # Note: requires socat
+set -euo pipefail
 
 PORT="$1"
 OUT="$2"
