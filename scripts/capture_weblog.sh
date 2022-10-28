@@ -16,7 +16,8 @@ if ! [[ "$PORT" =~ ^[0-9]+$ ]] ;
     exit 1
 fi
 
-socat TCP4-LISTEN:${PORT} file:${TMP},create && \
-    sed '1,/^\r\{0,1\}$/d' ${TMP} > ${OUT} && \
-    rm ${TMP}
-
+while true; do
+    socat TCP4-LISTEN:${PORT},reuseaddr file:${TMP},create && \
+        sed '1,/^\r\{0,1\}$/d' ${TMP} > ${OUT} && \
+        rm ${TMP}
+done;
