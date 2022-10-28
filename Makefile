@@ -8,6 +8,7 @@ WF_IMG = $(REGISTRY)"podman-nextflow:latest"
 WF_CTNR = "wf-container"
 # Container port used for logging
 LOG_PORT = 31212
+LOG_DIR = "logs"
 
 ### Containerized commands
 # Creates the detached (bakground) container used for workflows
@@ -30,8 +31,10 @@ run: log
 
 # Start a background logging process in the container
 log: start
-	$(eval LOG_FILE := $(shell date -u +%Y%m%dT%H-%M-%S).log)
-	$(POD_EXE) ./scripts/capture_weblog.sh $(LOG_PORT) $(LOG_FILE) &
+	$(eval RUN_LOG := $(LOG_DIR)/$(shell date -u +%Y%m%dT%H-%M-%S))
+	mkdir -p $(RUN_LOG)
+	$(POD_EXE) ./scripts/capture_weblog.sh \
+		"$(LOG_PORT)" "$(RUN_LOG)/weblog.json" &
 
 # Restart the container
 start: clean

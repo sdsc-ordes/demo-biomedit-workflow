@@ -5,8 +5,9 @@
 .nextflow*
 work/
 
-# don't include data files
+# don't include data and log files
 data/*
+logs/*
 
 ### Emacs ###
 # -*- mode: gitignore; -*-
