@@ -3,25 +3,24 @@
 ### Config variables
 # Podman registry used to push/pull images
 REGISTRY = ""
-# Name of the image used to run the workflow
+# Name of the image and container used to run the workflow
 WF_IMG = $(REGISTRY)"podman-nextflow:latest"
+WF_CTNR = "wf-container"
 # Container port used for logging
 LOG_PORT = 31212
 
 ### Containerized commands
 # Creates the detached (bakground) container used for workflows
-POD_RUN = podman run -dt --name wf-container --privileged -v ${PWD}:/repo:Z -w /repo --user root
+POD_RUN = podman run -dt --name $(WF_CTNR) --privileged -v $(PWD):/repo:Z -w /repo --user root
 # Executes a single command in the detached workflow container
-POD_EXE = podman exec wf-container
-# Executes a single background command in the workflow container
-POD_BAK = podman exec -d wf-container
+POD_EXE = podman exec $(WF_CTNR)
 # Delete the detached workflow container
-POD_RM = podman container rm -f wf-container
+POD_RM = podman container rm -f $(WF_CTNR)
 
 ### Workflow recipes
 # Drop into a shell in the workflow container
-get_in: log 
-	podman attach wf-container
+get_in:
+	podman attach $(WF_CTNR)
 
 # Execute nextflow pipeline in a podman container
 run: log
