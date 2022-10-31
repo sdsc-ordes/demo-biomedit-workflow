@@ -1,6 +1,7 @@
 .PHONY: run clean get_in
 
 ### Config variables
+
 # Podman registry used to push/pull images
 REGISTRY = ""
 # Name of the image and container used to run the workflow
@@ -13,14 +14,14 @@ LOG_DIR = "logs"
 MNT="/repo"
 
 ### Containerized commands
+
 # Creates the detached (bakground) container used for workflows
 POD_RUN = podman run -dt --name $(WF_CTNR) --privileged -v $(PWD):$(MNT):Z -w $(MNT) --user root
 # Executes a single command in the detached workflow container
 POD_EXE = podman exec $(WF_CTNR)
-# Delete the detached workflow container
-POD_RM = podman container rm -f $(WF_CTNR)
 
 ### Workflow recipes
+
 # Drop into a shell in the workflow container
 get_in:
 	podman attach $(WF_CTNR)
@@ -44,9 +45,11 @@ start: clean
 
 # Clean existing workflow container from previous run
 clean:
-	$(POD_RM) 2>/dev/null || true
+	podman container rm -f $(WF_CTNR) 2>/dev/null || true
 
-### Image management
+
+### Image management [requires internet connection]
+
 # Push the newly built workflow image
 push: wf_img
 	podman push $(WF_IMG)
