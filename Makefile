@@ -20,11 +20,11 @@ POD_EXE = podman exec $(WF_CTNR)
 ### Workflow recipes
 
 # Drop into a shell in the workflow container
-get_in:
+get_in: start
 	podman attach $(WF_CTNR)
 
 # Execute nextflow pipeline in a podman container
-run: log
+run: start
 	$(POD_EXE) nextflow run \
 		-with-weblog http://localhost:31212 \
 		$(MNT)/main.nf
