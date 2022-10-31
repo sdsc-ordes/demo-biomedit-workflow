@@ -7,9 +7,6 @@ REGISTRY = ""
 # Name of the image and container used to run the workflow
 WF_IMG = $(REGISTRY)"podman-nextflow:latest"
 WF_CTNR = "wf-container"
-# Container port used for logging
-LOG_PORT = 31212
-LOG_DIR = "logs"
 # Mount point path for pwd in containers
 MNT="/repo"
 
@@ -31,13 +28,6 @@ run: log
 	$(POD_EXE) nextflow run \
 		-with-weblog http://localhost:31212 \
 		$(MNT)/main.nf
-
-# Start a background logging process in the container
-log: start
-	$(eval RUN_LOG := $(LOG_DIR)/$(shell date -u +%Y%m%dT%H-%M-%S))
-	mkdir -p $(RUN_LOG)
-	$(POD_EXE) ./scripts/capture_weblog.sh \
-		"$(LOG_PORT)" "$(RUN_LOG)/weblog.json" &
 
 # Restart the container
 start: clean
