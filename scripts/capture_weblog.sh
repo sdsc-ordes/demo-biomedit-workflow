@@ -10,14 +10,14 @@ PORT="$1"
 OUT="$2"
 TMP=$(mktemp)
 
-if ! [[ "$PORT" =~ ^[0-9]+$ ]] ; 
-    then exec >&2
-    echo "error: Input must be a port number"
-    exit 1
+if ! [[ "$PORT" =~ ^[0-9]+$ ]]; then
+	exec >&2
+	echo "error: Input must be a port number"
+	exit 1
 fi
 
 while true; do
-    socat TCP4-LISTEN:${PORT},reuseaddr file:${TMP},create && \
-        sed '1,/^\r\{0,1\}$/d' ${TMP} > ${OUT} && \
-        rm ${TMP}
-done;
+	socat TCP4-LISTEN:${PORT},reuseaddr file:${TMP},create &&
+		sed '1,/^\r\{0,1\}$/d' ${TMP} >${OUT} &&
+		rm ${TMP}
+done
