@@ -3,7 +3,7 @@
 ### Config variables
 
 # Podman registry used to push/pull images
-REGISTRY = ""
+REGISTRY = "container-registry.dcc.sib.swiss/nds-lucid/"
 # Name of the image and container used to run the workflow
 WF_IMG = $(REGISTRY)"podman-nextflow:latest"
 WF_CTNR = "wf-container"
