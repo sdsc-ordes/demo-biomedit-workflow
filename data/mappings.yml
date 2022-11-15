@@ -44,16 +44,16 @@ mappings:
       - [sphn:has_end_date_time, $(resource.period.end)]
       - p: sphn:has_subject_pseudo_identifier
         o:
-         - mapping: patient
-           condition:
-             function: equal
-             parameters:
-               - [str1, $(resource.subject.reference), s]
-               - [str2, $(fullUrl)]
+        - mapping: patient
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(resource.subject.reference), s]
+              - [str2, $(fullUrl)]
       - p: sphn:has_data_provider_institute
         o:
-         - mapping: organization
-           condition:
+        - mapping: organization
+          condition:
             function: equal
             parameters:
               - [str1, $(resource.serviceProvider.reference), s]
