@@ -2,7 +2,7 @@
 // This process concatenates all the patients JSON files into a single file:
 // jq version (does not support streaming)
 // jq -n '[inputs]' ${INPUT_DIR}/*json > $OUTPUT_FILE
-process concat_patients_json {
+process cat_patients_json {
 
     input: path json_dir
     output: path 'patients.json'
