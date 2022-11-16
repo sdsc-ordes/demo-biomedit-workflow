@@ -31,7 +31,16 @@ mappings:
     s: $(fullUrl)
     po:
       - [a, sphn:DataProviderInstitute]
+      - [a, sphn:Location]
+      - [sphn:hasDataProviderInstitute, $(resource.id)]
       - [sphn:hasCode, $(resource.id)]
+      - [sphn:hasClass, sphn:Hospital]
+    s: $(resource.id)
+    po:
+      - [a, sphn:Code]
+      - [sphn:hasIdentifier, $(resource.id)]
+      - [sphn:hasCodingSystemAndVersion, "https://github.com/synthetichealth/synthea"]
+      - [sphn:hasName, $(resource.name)]
 
   encounter:
     source:
@@ -58,4 +67,13 @@ mappings:
             parameters:
               - [str1, $(resource.serviceProvider.reference), s]
               - [str2, $(fullUrl), o]
+      - p: sphn:hasCurrentLocation
+        o:
+        - mapping: organization
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(resource.serviceProvider.reference), s]
+              - [str2, $(fullUrl), o]
+
 
