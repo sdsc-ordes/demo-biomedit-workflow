@@ -23,7 +23,7 @@ mappings:
     s: $(fullUrl)
     po:
       - [a, sphn:SubjectPseudoIdentifier]
-      - [sphn:has_identifier, $(resource.id)]
+      - [sphn:hasIdentifier, $(resource.id)]
 
   organization:
     source:
@@ -31,7 +31,7 @@ mappings:
     s: $(fullUrl)
     po:
       - [a, sphn:DataProviderInstitute]
-      - [sphn:has_code, $(resource.id)]
+      - [sphn:hasCode, $(resource.id)]
 
   encounter:
     source:
@@ -39,10 +39,10 @@ mappings:
     s: $(fullUrl)
     po:
       - [a, sphn:HealthcareEncounter]
-      - [sphn:has_identifier, $(resource.id)]
-      - [sphn:has_start_date_time, $(resource.period.start)]
-      - [sphn:has_end_date_time, $(resource.period.end)]
-      - p: sphn:has_subject_pseudo_identifier
+      - [sphn:hasIdentifier, $(resource.id)]
+      - [sphn:hasStartDateTime, $(resource.period.start)]
+      - [sphn:hasEndDateTime, $(resource.period.end)]
+      - p: sphn:hasSubjectPseudoIdentifier
         o:
         - mapping: patient
           condition:
@@ -50,7 +50,7 @@ mappings:
             parameters:
               - [str1, $(resource.subject.reference), s]
               - [str2, $(fullUrl)]
-      - p: sphn:has_data_provider_institute
+      - p: sphn:hasDataProviderInstitute
         o:
         - mapping: organization
           condition:
