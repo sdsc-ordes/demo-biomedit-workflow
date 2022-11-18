@@ -1,6 +1,7 @@
 prefixes:
   sphn: https://biomedit.ch/rdf/sphn-ontology/sphn#
   syn: https://github.com/synthetichealth/synthea/
+  dc: http://purl.org/dc/elements/1.1/
 
 sources:
   patients:
@@ -15,8 +16,32 @@ sources:
     access: patients.json
     referenceFormulation: jsonpath
     iterator: "$[*].entry[?(@.resource.resourceType=='Encounter')]"
+  head:
+    access: patients.json
+    referenceFormulation: jsonpath
+    iterator: "$[1]"
 
 mappings:
+  synthea_code:
+    source:
+      - head
+    s: syn:code
+    po:
+      - [a, sphn:Code]
+      - [sphn:hasName, "Synthea"]
+      - [sphn:hasCodingSystemAndVersion, "v2.4.0-404-ge7ce2295"]
+      - [sphn:hasIdentifier, "https://github.com/synthetichealth/synthea"]
+
+  synthea_prov:
+    source:
+      - head
+    s: "https://github.com/synthetichealth/synthea"
+    po:
+      - [a, sphn:DataProviderInstitute]
+      - p: sphn:hasCode
+        o:
+        - mapping: synthea_code
+    
   patient:
     source:
       - patients
@@ -24,6 +49,10 @@ mappings:
     po:
       - [a, sphn:SubjectPseudoIdentifier]
       - [sphn:hasIdentifier, $(resource.id)]
+      - p: sphn:hasDataProviderInstitute
+        o:
+        - mapping: synthea_prov
+
 
   organization:
     source:
@@ -31,16 +60,49 @@ mappings:
     s: $(fullUrl)
     po:
       - [a, sphn:DataProviderInstitute]
+      - p: sphn:hasCode
+        o:
+        - mapping: code
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(resource.id), s]
+              - [str2, $(resource.id), o]
+  location:
+    source:
+      - organizations
+    s: $(fullUrl)
+    po:
       - [a, sphn:Location]
-      - [sphn:hasDataProviderInstitute, $(resource.id)]
-      - [sphn:hasCode, $(resource.id)]
-      - [sphn:hasClass, sphn:Hospital]
-    s: $(resource.id)
+      - [sphn:hasClass, sphn:MedicalCenter]
+      - p: sphn:hasDataProviderInstitute
+        o:
+        - mapping: organization
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(resource.id), s]
+              - [str2, $(resource.id), o]
+
+  code:
+    source:
+      - organizations
+    s: syn:code_$(resource.id)
     po:
       - [a, sphn:Code]
       - [sphn:hasIdentifier, $(resource.id)]
       - [sphn:hasCodingSystemAndVersion, "https://github.com/synthetichealth/synthea"]
       - [sphn:hasName, $(resource.name)]
+
+  # The source data does not have a concept of administrative case.
+  # For the sake of simplicity, we consider encounter == case in this demo
+  administrative_case:
+    source:
+      - encounters
+    s: $(fullUrl)
+    po:
+      - [a, sphn:AdministrativeCase]
+      - [sphn:hasAdmissionDateTime, $(resource.period.start), xsd:dateTime]
 
   encounter:
     source:
@@ -49,8 +111,9 @@ mappings:
     po:
       - [a, sphn:HealthcareEncounter]
       - [sphn:hasIdentifier, $(resource.id)]
-      - [sphn:hasStartDateTime, $(resource.period.start)]
-      - [sphn:hasEndDateTime, $(resource.period.end)]
+      - [sphn:hasStartDateTime, $(resource.period.start), xsd:dateTime]
+      - [sphn:hasEndDateTime, $(resource.period.end), xsd:dateTime]
+#     - [dc:description, $(resource.type[0].text)]
       - p: sphn:hasSubjectPseudoIdentifier
         o:
         - mapping: patient
@@ -58,8 +121,16 @@ mappings:
             function: equal
             parameters:
               - [str1, $(resource.subject.reference), s]
-              - [str2, $(fullUrl)]
-      - p: sphn:hasDataProviderInstitute
+              - [str2, $(fullUrl), o]
+      - p: sphn:hasAdministrativeCase
+        o:
+        - mapping: administrative_case
+          condition:
+            function: equal
+            parameters:
+              - [str1, $(resource.id), s]
+              - [str2, $(resource.id), o]
+      - p: [sphn:hasDataProviderInstitute, sphn:hasCurrentLocation]
         o:
         - mapping: organization
           condition:
@@ -67,13 +138,3 @@ mappings:
             parameters:
               - [str1, $(resource.serviceProvider.reference), s]
               - [str2, $(fullUrl), o]
-      - p: sphn:hasCurrentLocation
-        o:
-        - mapping: organization
-          condition:
-            function: equal
-            parameters:
-              - [str1, $(resource.serviceProvider.reference), s]
-              - [str2, $(fullUrl), o]
-
-
