@@ -32,7 +32,7 @@ mappings:
       - [sphn:hasCodingSystemAndVersion, "v2.4.0-404-ge7ce2295"]
       - [sphn:hasIdentifier, "https://github.com/synthetichealth/synthea"]
 
-  synthea_prov:
+  synthea_provider:
     source:
       - head
     s: "https://github.com/synthetichealth/synthea"
@@ -51,7 +51,7 @@ mappings:
       - [sphn:hasIdentifier, $(resource.id)]
       - p: sphn:hasDataProviderInstitute
         o:
-        - mapping: synthea_prov
+        - mapping: synthea_provider
 
 
   organization:
@@ -59,7 +59,9 @@ mappings:
       - organizations
     s: $(fullUrl)
     po:
-      - [a, sphn:DataProviderInstitute]
+      - [a, [sphn:Location, sphn:DataProviderInstitute]]
+      - [sphn:hasClass, sphn:MedicalCenter~iri]
+      - [sphn:hasDataProviderInstitute, $(fullUrl)~iri]
       - p: sphn:hasCode
         o:
         - mapping: code
@@ -68,22 +70,6 @@ mappings:
             parameters:
               - [str1, $(resource.id), s]
               - [str2, $(resource.id), o]
-  location:
-    source:
-      - organizations
-    s: $(fullUrl)
-    po:
-      - [a, sphn:Location]
-      - [sphn:hasClass, sphn:MedicalCenter]
-      - p: sphn:hasDataProviderInstitute
-        o:
-        - mapping: organization
-          condition:
-            function: equal
-            parameters:
-              - [str1, $(resource.id), s]
-              - [str2, $(resource.id), o]
-
   code:
     source:
       - organizations
