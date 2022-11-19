@@ -2,6 +2,9 @@
 
 ### Config variables
 
+ifdef REGISTRY
+	REG_FLAG = "--registry $(REGISTRY)"
+endif
 # Podman registry used to push/pull images
 # Name of the image and container used to run the workflow
 WF_IMG = $(REGISTRY)"podman-nextflow:latest"
@@ -26,7 +29,8 @@ get_in: start
 run: start
 	$(POD_EXE) nextflow run \
 		$(MNT)/main.nf \
-		--registry $(REGISTRY)
+		$(REG_FLAG) \
+		-params-file conf/containers.yaml \
 
 # Restart the container
 start: clean
@@ -49,5 +53,5 @@ wf_img: docker/podman-nextflow.Dockerfile pod_img
 
 # Build the podman [in podman] image
 pod_img: docker/podman-in-podman.Dockerfile
-	podman build -t podman-in-podman:latest -f $< .
+	podman build -t $(REGISTRY)podman-in-podman:latest -f $< .
 
