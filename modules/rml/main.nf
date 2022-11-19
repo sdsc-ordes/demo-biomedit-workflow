@@ -33,3 +33,20 @@ process generate_triples {
         -o \${PWD}/patients_graph
     """
 }
+
+// Validate data graph using SPHN shacl shapes
+process shacl_validation {
+
+    input:
+    path data
+    path ontology
+    path shapes
+
+    output:
+    path 'report.ttl'
+
+    script:
+    """
+    pyshacl -s $shapes -e $ontology $data > 'report.ttl'
+    """
+}
