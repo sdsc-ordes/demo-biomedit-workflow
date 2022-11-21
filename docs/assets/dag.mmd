@@ -1,14 +1,22 @@
 flowchart TD
     p0(( ))
-    p1[concat_patients_json]
+    p1[cat_patients_json]
     p2(( ))
     p3[convert_mappings]
     p4[generate_triples]
-    p5[cat_gz_triples]
+    p5(( ))
     p6(( ))
+    p7[validate_shacl]
+    p8(( ))
+    p9[gzip_triples]
+    p10(( ))
     p0 -->|json_dir| p1
     p1 --> p4
     p2 -->|yml_mappings| p3
     p3 --> p4
-    p4 --> p5
-    p5 --> p6
+    p4 --> p7
+    p5 -->|ontology| p7
+    p6 -->|shapes| p7
+    p7 --> p8
+    p4 -->|triples| p9
+    p9 --> p10

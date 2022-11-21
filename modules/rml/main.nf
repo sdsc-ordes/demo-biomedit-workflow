@@ -19,7 +19,7 @@ process generate_triples {
     path rml
 
     output:
-    path 'patients_graph'
+    path 'graph.nt'
 
     script:
     """
@@ -31,5 +31,27 @@ process generate_triples {
     java -jar /opt/app/RMLStreamer.jar toFile \
         -m \${PWD}/$rml \
         -o \${PWD}/patients_graph
+
+    cat patients_graph/* | sort -u > graph.nt
     """
 }
+
+// Validate data graph using SPHN shacl shapes
+process validate_shacl {
+    publishDir "data/out", mode: 'copy'
+
+    input:
+    path data
+    path ontology
+    path shapes
+
+    output:
+    path 'report.ttl'
+
+    script:
+    """
+    pyshacl -s $shapes -e $ontology $data > 'report.ttl'
+    """
+}
+
+

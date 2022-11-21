@@ -75,27 +75,35 @@ The repository is mounted in the Nextflow container, and Nextflow is responsible
 
 ## Workflow description
 
-The workflow processes simulated patient data from synthea in JSON format and generates an RDF graph describing patient healthcare appointments (patient, dates and institution).
+The workflow processes simulated patient data from synthea in JSON format and generates an RDF graph describing patient healthcare appointments (patient, dates and institution). It then validates the resulting graph.
 
-The data is semantized using the [SPHN ontology](https://www.biomedit.ch/rdf/sphn-ontology). Mapping rules are defined in human readable [YARRRML format](https://rml.io/yarrrml/) (see [data/mappings.yml](data/mappings.yml)). The triples are materialized using containerized tools from [rml.io](https://rml.io).
+The data is semantized using the [SPHN ontology](https://www.biomedit.ch/rdf/sphn-ontology). Mapping rules are defined in human readable [YARRRML format](https://rml.io/yarrrml/) (see [data/mappings.yml](data/mappings.yml)). The triples are materialized using containerized tools from [rml.io](https://rml.io). The graph validation is done using [pySHACL](https://github.com/RDFLib/pySHACL) with the [SPHN shacl shapes](https://git.dcc.sib.swiss/sphn-semantic-framework/sphn-shacl-generator).
 
 The workflow definition can be found in [main.nf](main.nf) and its configuration in [nextflow.config](nextflow.config).
 
 ```mermaid
 flowchart TD
     p0(( ))
-    p1[concat_patients_json]
+    p1[cat_patients_json]
     p2(( ))
     p3[convert_mappings]
     p4[generate_triples]
-    p5[cat_gz_triples]
+    p5(( ))
     p6(( ))
+    p7[validate_shacl]
+    p8(( ))
+    p9[gzip_triples]
+    p10(( ))
     p0 -->|json_dir| p1
     p1 --> p4
     p2 -->|yml_mappings| p3
     p3 --> p4
-    p4 --> p5
-    p5 --> p6
+    p4 -->|graph| p7
+    p5 -->|ontology| p7
+    p6 -->|shapes| p7
+    p7 --> p8
+    p4 -->|graph| p9
+    p9 --> p10
 ```
 
 ## Usage
