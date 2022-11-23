@@ -117,3 +117,8 @@ The Makefile also contains command to manage podman images:
 * `make wf_img`: Builds the workflow image
 
 All other rules are called automatically by those described above.
+
+## License
+
+The code in this repository is licensed under [GPLv3](LICENSE).
+The SPHN ontology and shapes files included in this repository are redistributed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0) license](https://creativecommons.org/licenses/by-nc-sa/4.0/). The SPHN ontology can be explored on the [BioMedIT website](https://www.biomedit.ch/rdf/sphn-ontology/sphn), and the shapes and ontology files were retrieved from the [SHACLer repository](https://git.dcc.sib.swiss/sphn-semantic-framework/sphn-shacl-generator).
