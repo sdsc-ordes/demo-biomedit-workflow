@@ -1,5 +1,13 @@
 # Demo BioMedIT workflow
 
+## Table of contents
+
+* [Context](#context)
+* [Containerized workflow](#containerized-workflow)
+* [Workflow description](#workflow-description)
+* [Usage](#usage)
+* [License](#license)
+
 ## Context
 
 This repository showcases a containerized workflow to semantize synthetic patient data using the SPHN framework.
