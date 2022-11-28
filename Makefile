@@ -1,4 +1,4 @@
-.PHONY: run clean get_in
+.PHONY: prod-run dev-run clean get_in build push
 
 ### Config variables
 
@@ -51,11 +51,11 @@ clean:
 ### Image management [requires internet connection]
 
 # Push the newly built workflow image
-push: wf_img
+push: build
 	podman push $(WF_IMG)
 
 # Build the workflow image (which is based on the podman image)
-wf_img: docker/podman-nextflow.Dockerfile pod_img
+build: docker/podman-nextflow.Dockerfile pod_img
 	podman build -t $(WF_IMG) -f $< .
 
 # Build the podman [in podman] image
