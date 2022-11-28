@@ -11,6 +11,7 @@ WF_IMG = $(REGISTRY)"podman-nextflow:latest"
 WF_CTNR = "wf-container"
 # Mount point path for pwd in containers
 MNT="/repo"
+URL="https://github.com/SDSC-ORD/demo_biomedit_workflow"
 
 ### Containerized commands
 
@@ -26,7 +27,13 @@ get_in: start
 	podman attach $(WF_CTNR)
 
 # Execute nextflow pipeline in a podman container
-run: start
+prod-run: start
+	$(POD_EXE) nextflow run \
+		$(URL) -r main \
+		$(REG_FLAG) \
+		-params-file conf/containers.yaml \
+
+dev-run: start
 	$(POD_EXE) nextflow run \
 		$(MNT)/main.nf \
 		$(REG_FLAG) \
