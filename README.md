@@ -117,7 +117,8 @@ flowchart TD
 ## Usage
 
 Commands to interact with the workflow are written as Makefile rules (see the [Makefile](Makefile)):
-* `make run`: Starts the nextflow container and runs the workflow inside.
+* `make prod-run`: Starts the nextflow container and runs the workflow inside using the latest commit on the repository.
+* `make dev-run`: Starts the nextflow container and runs the workflow inside using the workflow file in the current directory.
 * `make get_in`: Starts the nextflow container and opens an interactive shell inside.
 
 The Makefile also contains command to manage podman images:
