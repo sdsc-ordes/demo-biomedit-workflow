@@ -2,16 +2,15 @@
 
 ### Config variables
 
-ifdef REGISTRY
-	REG_FLAG = "--registry $(REGISTRY)"
-endif
+# Git provider URL where the workflow is located
+URL="https://github.com/SDSC-ORD/demo_biomedit_workflow"
 # Podman registry used to push/pull images
 # Name of the image and container used to run the workflow
+REGISTRY='container-registry.dcc.sib.swiss/nds-lucid/'
 WF_IMG = $(REGISTRY)"podman-nextflow:latest"
 WF_CTNR = "wf-container"
 # Mount point path for pwd in containers
 MNT="/repo"
-URL="https://github.com/SDSC-ORD/demo_biomedit_workflow"
 
 ### Containerized commands
 
@@ -29,15 +28,13 @@ get_in: start
 # Execute nextflow pipeline in a podman container
 prod-run: start
 	$(POD_EXE) nextflow run \
-		$(URL) -r main \
-		$(REG_FLAG) \
-		-params-file conf/containers.yaml \
+		$(URL) -r main
 
 dev-run: start
 	$(POD_EXE) nextflow run \
 		$(MNT)/main.nf \
-		$(REG_FLAG) \
-		-params-file conf/containers.yaml \
+		-profile dev \
+		-params-file conf/containers.yaml
 
 # Restart the container
 start: clean
