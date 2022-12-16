@@ -1,6 +1,7 @@
 
 // Convert human-readable yarrrml mappings to machine-readable ttl
 process convert_mappings {
+    container "container-registry.dcc.sib.swiss/nds-lucid/yarrrml-parser:1.3.6"
 
     input: path yml_mappings
     output: path 'mappings.rml.ttl'
@@ -13,6 +14,7 @@ process convert_mappings {
 
 // Use mappings to create patients RDF graph from json file
 process generate_triples {
+    container "container-registry.dcc.sib.swiss/nds-lucid/rmlstreamer:2.4.1"
 
     input:
     path patients
@@ -38,6 +40,7 @@ process generate_triples {
 
 // Validate data graph using SPHN shacl shapes
 process validate_shacl {
+    container "container-registry.dcc.sib.swiss/nds-lucid/pyshacl:0.20.0"
     publishDir "data/out", mode: 'copy'
 
     input:

@@ -2,16 +2,15 @@
 
 ### Config variables
 
-ifdef REGISTRY
-	REG_FLAG = "--registry $(REGISTRY)"
-endif
+# Git provider URL where the workflow is located
+URL="https://github.com/SDSC-ORD/demo_biomedit_workflow"
 # Podman registry used to push/pull images
 # Name of the image and container used to run the workflow
-WF_IMG = $(REGISTRY)"podman-nextflow:latest"
+REGISTRY=container-registry.dcc.sib.swiss
+WF_IMG = "$(REGISTRY)/nds-lucid/podman-nextflow:latest"
 WF_CTNR = "wf-container"
 # Mount point path for pwd in containers
 MNT="/repo"
-URL="https://github.com/SDSC-ORD/demo_biomedit_workflow"
 
 ### Containerized commands
 
@@ -29,15 +28,14 @@ get_in: start
 # Execute nextflow pipeline in a podman container
 prod-run: start
 	$(POD_EXE) nextflow run \
-		$(URL) -r main \
-		$(REG_FLAG) \
-		-params-file conf/containers.yaml \
+		$(MNT)/main.nf
 
+# Same, but use publicly available containers for development
 dev-run: start
 	$(POD_EXE) nextflow run \
 		$(MNT)/main.nf \
-		$(REG_FLAG) \
-		-params-file conf/containers.yaml \
+		-profile dev \
+		-params-file conf/containers.yaml
 
 # Restart the container
 start: clean
@@ -50,15 +48,11 @@ clean:
 
 ### Image management [requires internet connection]
 
-# Push the newly built workflow image
-push: build
-	podman push $(WF_IMG)
-
 # Build the workflow image (which is based on the podman image)
 build: docker/podman-nextflow.Dockerfile pod_img
 	podman build -t $(WF_IMG) -f $< .
 
 # Build the podman [in podman] image
 pod_img: docker/podman-in-podman.Dockerfile
-	podman build -t $(REGISTRY)podman-in-podman:latest -f $< .
+	podman build -t podman-in-podman:latest -f $< .
 
