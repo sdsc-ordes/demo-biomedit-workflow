@@ -121,38 +121,14 @@ First clone the repository and move into the folder:
 `git clone https://github.com/SDSC-ORD/demo_biomedit_workflow.git && cd demo_biomedit_workflow`
 
 Commands to interact with the workflow are written as Makefile rules (see the [Makefile](Makefile)):
-* `make prod-run`: Run the containerized workflow using the latest commit on the repository remote.
-* `make dev-run`: Run the containerized workflow using the workflow file in the current directory.
+* `make prod-run`: Run the containerized workflow using the latest commit on the repository remote and containers from the private registry.
+* `make dev-run`: Run the containerized workflow using the workflow file in the current directory and publicly available containers defined in `conf/containers.yaml`.
 * `make get_in`: Start the nextflow container and open an interactive shell inside.
 
 The Makefile also contains command to manage podman images:
-* `make push`: Build and pushe the workflow image to provided registry
 * `make build`: Build the workflow image
 
 All other rules are called automatically by those described above.
-
-<details>
-<summary><b>Run without cloning</b></summary>
-
-Although it is recommended (and easier) to clone the repository, you could also run the workflow directly from the remote repository (assuming all required images are on the registry already).
-
-The data files as well as `containers.yaml` need to be available. Params defined in the config can be overriden on the command line (e.g. `input_dir` below).
-
-```sh
-REGISTRY=example.registry.com/username/
-REPO_URL=https://github.com/SDSC-ORD/demo_biomedit_workflow.git
-
-podman run --privileged --rm -it -v $PWD:/repo -w /repo \
-  ${REGISTRY}/podman-nextflow:tag \
-  nextflow run ${REPO_URL} \
-    -r main \
-    --input_dir=data/test \
-    -params-file containers.yaml \
-
-# You can add --registry=${REGISTRY} to override URIs in containers.yaml
-# and replace them with ${REGISTRY}/image-name:tag
-```
-</details>
 
 ## License
 
