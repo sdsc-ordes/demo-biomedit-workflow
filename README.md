@@ -120,6 +120,15 @@ First clone the repository and move into the folder:
 
 `git clone https://github.com/SDSC-ORD/demo_biomedit_workflow.git && cd demo_biomedit_workflow`
 
+### New
+
+Commands to interact with the workflow will be defined as different [Nextflow profiles](https://www.nextflow.io/docs/latest/config.html#config-profiles) with the following commands:
+
+* `prod-run`: Run the containerized workflow using the latest commit on the repository remote and containers from the private registry.
+* `dev-run`: Run the containerized workflow using the workflow file in the current directory and publicly available containers defined in `conf/containers.yaml`.
+
+
+### Old
 Commands to interact with the workflow are written as Makefile rules (see the [Makefile](Makefile)):
 * `make prod-run`: Run the containerized workflow using the latest commit on the repository remote and containers from the private registry.
 * `make dev-run`: Run the containerized workflow using the workflow file in the current directory and publicly available containers defined in `conf/containers.yaml`.
