@@ -126,6 +126,7 @@ Commands to interact with the workflow will be defined as different [Nextflow pr
 
 * `prod-run`: Run the containerized workflow using the latest commit on the repository remote and containers from the private registry.
 * `dev-run`: Run the containerized workflow using the workflow file in the current directory and publicly available containers defined in `conf/containers.yaml`.
+* `get_in`: Start the nextflow container and open an interactive shell inside.
 
 
 ### Old
