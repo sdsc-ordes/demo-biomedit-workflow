@@ -1,3 +1,0 @@
-rmlstreamer: docker.io/rmlio/rmlstreamer:2.4.1
-yarrrml_parser: docker.io/rmlio/yarrrml-parser:1.3.6
-pyshacl: docker.io/cmdoret/pyshacl:0.20.0
