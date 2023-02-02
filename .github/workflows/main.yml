@@ -20,5 +20,5 @@ jobs:
       - name: Setup Nextflow and run pipeline
       - uses: actions/checkout@v3
       - uses: nf-core/setup-nextflow@v1.2.0
-        run: nextflow run -profile dev ${GITHUB_WORKSPACE} 
+      - run: nextflow run -profile dev ${GITHUB_WORKSPACE} 
 
