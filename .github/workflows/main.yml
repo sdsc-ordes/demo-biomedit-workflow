@@ -13,6 +13,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get -y install podman
+          echo '[Service]/nDelegate=memory pids cpu cpuset' > /etc/systemd/system/user@.service.d/delegate.conf
   nextflow-devrun:
     name: run-wf
     runs-on: ubuntu-latest
