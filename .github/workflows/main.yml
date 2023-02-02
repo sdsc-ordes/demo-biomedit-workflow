@@ -13,6 +13,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get -y install podman
+          mkdir -p /etc/systemd/system/user@.service.d
           touch /etc/systemd/system/user@.service.d/delegate.conf
           echo '[Service]/nDelegate=memory pids cpu cpuset' > /etc/systemd/system/user@.service.d/delegate.conf
   nextflow-devrun:
