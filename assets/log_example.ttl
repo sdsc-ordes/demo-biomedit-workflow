@@ -1,4 +1,4 @@
-@base   <https://github.com/SDSC-ORD/demo_biomedit_workflow/blob/v1.1.0/> .
+@prefix : <https://github.com/SDSC-ORD/demo_biomedit_workflow/blob/v1.1.0/> .
 @prefix demo:   <https://github.com/SDSC-ORD/demo_biomedit_workflow/> .
 @prefix gh:   <https://github.com/> .
 @prefix owl:  <http://www.w3.org/2002/07/owl#> .
