@@ -1,0 +1,73 @@
+@base   <https://github.com/SDSC-ORD/demo_biomedit_workflow/blob/v1.1.0/> .
+@prefix demo:   <https://github.com/SDSC-ORD/demo_biomedit_workflow/> .
+@prefix gh:   <https://github.com/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix renku: <https://swissdatasciencecenter.github.io/renku-ontology/> .
+@prefix schema: <http://schema.org/> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+
+
+# General definitions
+
+demo:exitCode a owl:DatatypeProperty ;
+    rdfs:label "Exit code" ;
+    rdfs:comment "Exit code of a command denoting success or failure" ;
+    rdfs:range xsd:integer .
+
+demo:workflow_manager a prov:Role ;
+    rdfs:label "Workflow manager tool" .
+
+# Workflow logs
+
+<s3://demo-bucket.my/v0.1.0/big_venter_out> a prov:Location .
+<s3://demo-bucket.my/v0.1.0/input> a prov:Location .
+
+gh:cmdoret a prov:Person, schema:Person;
+    schema:identifier "cmdoret" ;
+    schema:name "Cyril Matthey-Doret".
+
+<https://nextflow.io/> a prov:SoftwareAgent, schema:SoftwareApplication ;
+    rdfs:label "Nextflow" ;
+    schema:softwareVersion "22.10.0" .
+
+: a schema:Project, schema:SoftwareSourceCode ;
+    schema:name "Demo Biomedit Workflow" ;
+    schema:version "0.1.0" ;
+    renku:hasActivity :big_venter ;
+    renku:hasPlan :big_venter_workflow ;
+    schema:author gh:cmdoret .
+
+:big_venter_workflow a prov:Plan ;
+    prov:hasLocation <https://github.com/SDSC-ORD/demo_biomedit_workflow/blob/v0.1.0/main.nf> ;
+    renku:command "nextflow run -r v0.1.0 -c nextflow.config main.nf" ;
+    renku:hasInputs :big_venter_in ;
+    renku:hasOutputs :big_venter_out ;
+    renku:success_codes "0"^^xsd:integer .
+
+:big_venter a prov:Activity ;
+    prov:startedAtTime "2023-02-27T12:00:00Z"^^xsd:dateTime ;
+    prov:endedAtTime "2023-02-27T12:13:00Z"^^xsd:dateTime ;
+    prov:used :big_venter_in ;
+    prov:generated :big_venter_out ;
+    demo:exitCode "0"^^xsd:integer ;
+    prov:wasAssociatedWith <https://nextflow.io/>;
+    prov:qualifiedAssociation [
+        a prov:Association ;
+        prov:hadPlan :big_venter_workflow ;
+        prov:agent <https://nextflow.io/> ;
+        prov:hadRole demo:workflow_manager ;
+    ] ;
+    prov:wasAttributedTo gh:cmdoret .
+
+:big_venter_out a prov:Entity, renku:commandOutput;
+    prov:wasGeneratedBy :big_venter ;
+    prov:wasDerivedFrom :big_venter_in ;
+    prov:atLocation <s3://demo-bucket.my/v0.1.0/big_venter_out> ;
+    renku:checksum "e0bd09ac253b8e063424672cad9ccc6037294a7022d2021566f0b0854d482873" ;
+    prov:generatedAtTime "2023-02-27T12:13:00Z"^^xsd:dateTime .
+
+:big_venter_in a prov:Entity, renku:commandInput;
+    prov:atLocation <s3://demo-bucket.my/v0.1.0/input> ;
+    renku:checksum "f19c843737e34b57bcc99a3d2ac7846adc5dffd9467bbae2526b94f1ea5c5450" .

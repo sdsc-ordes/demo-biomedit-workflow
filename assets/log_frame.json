@@ -1,0 +1,12 @@
+{
+    "@base":   "https://github.com/SDSC-ORD/demo_biomedit_workflow/blob/v0.1.0/",
+    "@context": {
+        "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+        "xsd":  "http://www.w3.org/2001/XMLSchema#",
+        "prov": "http://www.w3.org/ns/prov#",
+        "schema": "http://schema.org/",
+        "gh":   "https://github.com/",
+        "demo":   "https://github.com/SDSC-ORD/demo_biomedit_workflow/",
+        "renku": "https://swissdatasciencecenter.github.io/renku-ontology/"
+    }
+}
