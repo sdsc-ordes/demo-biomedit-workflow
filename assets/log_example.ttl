@@ -46,19 +46,19 @@ gh:cmdoret a prov:Person, schema:Person;
     renku:hasOutputs :big_venter_out ;
     renku:success_codes "0"^^xsd:integer .
 
+:big_venter_execution a prov:Association ;
+    prov:hadPlan :big_venter_workflow ;
+    prov:agent <https://nextflow.io/> ;
+    prov:hadRole demo:workflow_manager .
+
 :big_venter a prov:Activity ;
     prov:startedAtTime "2023-02-27T12:00:00Z"^^xsd:dateTime ;
     prov:endedAtTime "2023-02-27T12:13:00Z"^^xsd:dateTime ;
     prov:used :big_venter_in ;
     prov:generated :big_venter_out ;
     demo:exitCode "0"^^xsd:integer ;
-    prov:wasAssociatedWith <https://nextflow.io/>;
-    prov:qualifiedAssociation [
-        a prov:Association ;
-        prov:hadPlan :big_venter_workflow ;
-        prov:agent <https://nextflow.io/> ;
-        prov:hadRole demo:workflow_manager ;
-    ] ;
+    prov:wasAssociatedWith <https://nextflow.io/> ;
+    prov:qualifiedAssociation :big_venter_execution ;
     prov:wasAttributedTo gh:cmdoret .
 
 :big_venter_out a prov:Entity, renku:commandOutput;
