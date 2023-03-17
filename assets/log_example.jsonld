@@ -1,0 +1,126 @@
+{
+    "@id": "https://github.com/SDSC-ORD/demo_biomedit_workflow/0.1.0/gigantic_lattes/log",
+    "@context": {
+        "owl":    "http://www.w3.org/2002/07/owl#",
+        "prov":   "http://www.w3.org/ns/prov#",
+        "rdfs":   "http://www.w3.org/2000/01/rdf-schema#",
+        "renku":  "https://swissdatasciencecenter.github.io/renku-ontology/",
+        "schema": "http://schema.org/",
+        "xsd":    "http://www.w3.org/2001/XMLSchema#",
+        "gh":     "https://github.com/",
+        "repo":   "https://github.com/SDSC-ORD/demo_biomedit_workflow",
+        "loc":    "file:///home/cmatthey/Repos/github.com/SDSC-ORD/demo_biomedit_workflow/",
+        "@base":  "https://github.com/SDSC-ORD/demo_biomedit_workflow/0.1.0/gigantic_lattes/"
+    },
+    "@graph": [
+        {
+            "@id": "repo:workflow_manager",
+            "@type": "prov:Role" ,
+            "rdfs:label": { "@value": "Workflow manager tool" }
+        },
+        {
+            "@id": "https://nextflow.io/",
+            "@type": [
+                "prov:SoftwareAgent",
+                "schema:SoftwareApplication"
+            ],
+            "schema:softwareVersion": { "@value": "null" } ,
+            "rdfs:label": { "@value": "Nextflow" }
+        },
+        {
+            "@id": "gigantic_lattes_workflow",
+            "@type": "prov:Plan",
+            "prov:hasLocation": { "@id": "main.nf" },
+            "renku:command": { "@value": "nextflow run -profile dev main.nf" },
+            "renku:hasInputs": { "@id": "gigantic_lattes_in" },
+            "renku:hasOutputs": { "@id": "gigantic_lattes_out" },
+            "renku:success_codes": { "@value": "0" }
+        },
+        {
+            "@id": "gigantic_lattes_out",
+            "@type": [
+                "prov:Entity",
+                "renku:commandOutput"
+            ],
+            "prov:atLocation": { "@id": "loc:data/out/" },
+            "prov:generatedAtTime":
+                {
+                    "@type": "xsd:dateTime",
+                    "@value": "2023-03-16T17:14:00.559115+01:00"
+                },
+            "prov:wasDerivedFrom": { "@id": "gigantic_lattes_in" },
+            "prov:wasGeneratedBy": { "@id": "gigantic_lattes" }
+        },
+        {
+            "@id": "gh:cmatthey",
+            "@type": [
+                "prov:Person",
+                "schema:Person"
+            ],
+            "schema:identifier": { "@value": "cmatthey" }
+        },
+        {
+            "@id": "loc:data/raw/test",
+            "@type": "prov:Location"
+        },
+        {
+            "@id": "gigantic_lattes",
+            "@type": "prov:Activity",
+            "prov:endedAtTime": {
+                "@type": "xsd:dateTime",
+                "@value": "2023-03-16T17:14:00.559115+01:00"
+            },
+            "prov:generated": { "@id": "gigantic_lattes_out" },
+            "prov:qualifiedAssociation": { "@id": "gigantic_lattes_execution" },
+            "prov:startedAtTime":
+            {
+                "@type": "xsd:dateTime",
+                "@value": "2023-03-16T17:13:29.538677+01:00"
+            },
+            "prov:used": { "@id": "gigantic_lattes_in" },
+            "prov:wasAssociatedWith": { "@id": "https://nextflow.io/" },
+            "prov:wasAttributedTo": { "@id": "gh:cmatthey" },
+            "repo:exitCode": {
+                "@value": "0",
+                "@type": "xsd:integer"
+            }
+        },
+        {
+            "@id": "repo:exitCode",
+            "@type": "owl:DatatypeProperty",
+            "rdfs:comment": { "@value": "Exit code of a command denoting success or failure. 0 Means success" },
+            "rdfs:label": { "@value": "Exit code" },
+            "rdfs:range": { "@id": "xsd:integer" }
+        },
+        {
+            "@id": "gigantic_lattes_execution",
+            "@type": [ "prov:Association" ],
+            "prov:agent": { "@id": "https://nextflow.io/" },
+            "prov:hadPlan": { "@id": "gigantic_lattes_workflow" },
+            "prov:hadRole": { "@id": "repo:workflow_manager" }
+        },
+        {
+            "@id": "loc:data/out/",
+            "@type": "prov:Location"
+        },
+        {
+            "@id": "",
+            "@type": [
+                "schema:Project",
+                "schema:SoftwareSourceCode"
+            ],
+            "schema:author": { "@id": "gh:cmatthey" },
+            "schema:version": { "@value": "0.1.0" },
+            "renku:hasActivity": { "@id": "gigantic_lattes" },
+            "renku:hasPlan": { "@id": "gigantic_lattes_workflow" }
+        },
+        {
+            "@id": "gigantic_lattes_in",
+            "@type": [
+                "prov:Entity",
+                "renku:commandInput"
+            ],
+            "prov:atLocation": { "@id": "loc:data/raw/test" }
+        }
+    ]
+}
