@@ -14,7 +14,7 @@ This repository showcases a containerized workflow to semantize synthetic patien
 It is designed to run on biomedical systems with the following restrictions:
 
 * No internet acccess besides a private container registry
-* Only podman available
+* Only `podman` available
 * No root access
 * keep data provenance information separate from the git repository
 
@@ -95,9 +95,9 @@ The repository is mounted in the Nextflow container, and Nextflow is responsible
 
 ## Workflow description
 
-The workflow processes simulated patient data from synthea in JSON format and generates an RDF graph describing patient healthcare appointments (patient, dates and institution). It then validates the resulting graph.
+The workflow processes simulated patient data from synthea in JSON format and generates an RDF graph describing patient healthcare appointments (patient, dates and institution). It then validates the resulting graph. The workflow also produces an interoperable `log` file in JSON-LD format.
 
-The data is semantized using the [SPHN ontology](https://www.biomedit.ch/rdf/sphn-ontology). Mapping rules are defined in human readable [YARRRML format](https://rml.io/yarrrml/) (see [data/mappings.yml](data/mappings.yml)). The triples are materialized using containerized tools from [rml.io](https://rml.io). The graph validation is done using [pySHACL](https://github.com/RDFLib/pySHACL) with the [SPHN shacl shapes](https://git.dcc.sib.swiss/sphn-semantic-framework/sphn-shacl-generator).
+The data is semantized using the [SPHN ontology](https://www.biomedit.ch/rdf/sphn-ontology). Mapping rules are defined in human readable [YARRRML format](https://rml.io/yarrrml/) (see [data/mappings.yml](data/mappings.yml)). The triples are materialized using containerized tools from [rml.io](https://rml.io). The graph validation is done using [pySHACL](https://github.com/RDFLib/pySHACL) with the [SPHN shacl shapes](https://git.dcc.sib.swiss/sphn-semantic-framework/sphn-shacl-generator). The interoperable `log` is defined in `conf/log.conf` and is obtained by formatting [Nextflow's log](https://www.nextflow.io/docs/latest/tracing.html) using [JSON-LD](https://json-ld.org/) format.
 
 The workflow definition can be found in [main.nf](main.nf) and its configuration in [nextflow.config](nextflow.config).
 
@@ -132,13 +132,11 @@ First clone the repository and move into the folder:
 
 `git clone https://github.com/SDSC-ORD/demo_biomedit_workflow.git && cd demo_biomedit_workflow`
 
-### New
 
-Commands to interact with the workflow will be defined as different [Nextflow profiles](https://www.nextflow.io/docs/latest/config.html#config-profiles) with the following commands:
+To interact with the workflow for development or production, we use different [Nextflow profiles](https://www.nextflow.io/docs/latest/config.html#config-profiles) as follows:
 
-* `prod-run`: Run the containerized workflow using the latest commit on the repository remote and containers from the private registry.
-* `dev-run`: Run the containerized workflow using the workflow file in the current directory and publicly available containers defined in `conf/containers.yaml`.
-* `get_in`: Start the nextflow container and open an interactive shell inside.
+* `nextflow run -profile prod main.nf`: Run the containerized workflow using the latest commit on the repository remote and containers from the private registry.
+* `nextflow run -profile dev main.nf`: Run the containerized workflow using the workflow file in the current directory and publicly available containers defined in `conf/containers.yaml`.
 
 
 ## License
