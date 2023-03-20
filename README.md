@@ -138,8 +138,6 @@ To interact with the workflow for development or production, we use different [N
 * `nextflow run -profile prod main.nf`: Run the containerized workflow using the latest commit on the repository remote and containers from the private registry.
 * `nextflow run -profile dev main.nf`: Run the containerized workflow using the workflow file in the current directory and publicly available containers defined in `conf/containers.yaml`.
 
-The workflow will 
-
 
 ## License
 
