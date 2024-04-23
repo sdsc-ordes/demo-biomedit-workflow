@@ -16,6 +16,18 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+// unzip an archive into a directory
+process unzip_archive {
+  input: path archive
+  output: path 'unzipped'
+
+  script:
+  """
+  mkdir unzipped
+  unzip -q $archive -d unzipped
+  """
+}
+
 // This process concatenates all the patients JSON files into a single file:
 // jq version (does not support streaming)
 // jq -n '[inputs]' ${INPUT_DIR}/*json > $OUTPUT_FILE
