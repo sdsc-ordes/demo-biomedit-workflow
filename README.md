@@ -20,75 +20,8 @@ It is designed to run on biomedical systems with the following restrictions:
 
 ## Containerized workflow
 
-The project is structured to run individual tasks inside podman with modular containers. Nextflow is used as the workflow manager and event-based workflow executor.
+The project is structured to run individual tasks in their own podman container. Nextflow is used as the workflow manager and event-based workflow executor.
 
-
-```mermaid
-        C4Context
-      title Containerized workflow architecture
-
-      Boundary(l1, "Local", "Local env with podman and Nextflow") {
-        Person(Dev, "User", "dev run")
-        System(NextflowLoc, "Nextflow", "Nextflow workflow system.")
-      }
-      Boundary(loc1, "Task 1 container", "Public CONTAINER") {
-          System(Software1pub, "yarrrml-parser")
-      }
-
-      Boundary(loc2, "Task 2 container", "Public CONTAINER") {
-          System(Software2pub, "rmlstreamer")
-        }
-
-      Boundary(loc3, "Task 3 container", "Public CONTAINER") {
-          System(Software3pub, "pyshacl")
-        }
-      Boundary(b0, "BioMedIT", "SERVER with podman and Nextflow") {
-        Person(User, "User", "prod run")
-
-          System(Nextflow, "Nextflow", "Nextflow workflow system.")
-
-        Boundary(t1, "Task 1 container", "Harbor CONTAINER") {
-          System(Software1, "yarrrml-parser")
-        }
-
-        Boundary(t2, "Task 2 container", "Harbor CONTAINER") {
-          System(Software2, "rmlstreamer")
-        }
-
-        Boundary(t3, "Task 3 container", "Harbor CONTAINER") {
-          System(Software3, "pyshacl")
-        }
-
-      }
-
-      UpdateLayoutConfig($c4ShapeInRow="1", $c4BoundaryInRow="1")
-
-      Rel(User, Nextflow, "calls")
-      Rel(Nextflow, Software1, "calls")
-      Rel(Nextflow, Software2, "calls")
-      Rel(Nextflow, Software3, "calls")
-
-      Rel(Dev, NextflowLoc, "calls")
-      Rel(NextflowLoc, Software1pub, "calls")
-      Rel(NextflowLoc, Software2pub, "calls")
-      Rel(NextflowLoc, Software3pub, "calls")
-
-      UpdateRelStyle(User, Nextflow, $textColor="red", $lineColor="red")
-      UpdateRelStyle(Nextflow, Software1, $textColor="red", $lineColor="red")
-      UpdateRelStyle(Nextflow, Software2, $textColor="red", $lineColor="red")
-      UpdateRelStyle(Nextflow, Software3, $textColor="red", $lineColor="red")
-
-      UpdateRelStyle(Dev, NextflowLoc, $textColor="red", $lineColor="red")
-      UpdateRelStyle(NextflowLoc, Software1pub, $textColor="red", $lineColor="red")
-      UpdateRelStyle(NextflowLoc, Software2pub, $textColor="red", $lineColor="red")
-      UpdateRelStyle(NextflowLoc, Software3pub, $textColor="red", $lineColor="red")
-
-
-      UpdateRelStyle(Nextflow, User, $textColor="red", $lineColor="red")
-
-      UpdateLayoutConfig($c4ShapeInRow="5", $c4BoundaryInRow="4")
-
-```
 
 ## Workflow description
 
@@ -137,11 +70,31 @@ To interact with the workflow for development or production, we use different [N
 * `nextflow run -profile standard main.nf`: Run the workflow using the workflow file in the current directory and publicly available containers defined in `conf/containers.yaml`. This is the default profile, and the `-profile` option can therefore be omitted.
 * `nextflow run -profile prod main.nf`: Run the containerized workflow using the latest commit on the repository remote and containers from the private registry.
 
-## Execution mode
+### Execution mode
 
 By default, the workflow will be executed on each zip file present in the input directory.
 
 When the option `--listen=true` is provided, the workflow manager will instead listen continuously for filesystem events and trigger execution whenever a new zip file appears in the input directory.
+
+### Outputs
+
+The `data/out` is structured as follows:
+
+```
+data/out
+├── logs
+│   └── 2024-04-24T11:32:52.980140+02:00_infallible_kilby_logs.json
+├── reports
+│   ├── test_patients_1_report.ttl
+│   └── test_patients_2_report.ttl
+└── triples
+    ├── test_patients_1.nt.gz
+    └── test_patients_2.nt.gz
+```
+
+Where `triples` contains the semantized data for each input archive, and `reports` contains the shacl validation report, indicating any violation of the schema constraints.
+
+For each workflow run, a time-stamped log file with a unique name is also saved in `logs`.
 
 ## License
 
