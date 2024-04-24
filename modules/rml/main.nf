@@ -39,7 +39,7 @@ process generate_triples {
     path rml
 
     output:
-    path 'graph.nt'
+    path "${patients.baseName}.nt"
 
     script:
     """
@@ -52,14 +52,14 @@ process generate_triples {
         -m \${PWD}/$rml \
         -o \${PWD}/patients_graph
 
-    cat patients_graph/* | sort -u > graph.nt
+    cat patients_graph/* | sort -u > "${patients.baseName}.nt"
     """
 }
 
 // Validate data graph using SPHN shacl shapes
 process validate_shacl {
     container "nds-lucid/pyshacl:0.20.0"
-    publishDir "data/out", mode: 'copy'
+    publishDir "data/out/reports", mode: 'copy'
 
     input:
     path data
@@ -67,11 +67,15 @@ process validate_shacl {
     path shapes
 
     output:
-    path 'report.ttl'
+    path "${data.simpleName}_report.ttl"
 
     script:
     """
-    pyshacl -s $shapes -e $ontology $data > 'report.ttl'
+    pyshacl \
+      -s $shapes \
+      -e $ontology \
+      $data \
+    > "${data.simpleName}_report.ttl"
     """
 }
 

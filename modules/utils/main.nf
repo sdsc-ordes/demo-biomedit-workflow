@@ -19,12 +19,12 @@
 // unzip an archive into a directory
 process unzip_archive {
   input: path archive
-  output: path 'unzipped'
+  output: path "${archive.baseName}"
 
   script:
   """
   mkdir unzipped
-  unzip -q $archive -d unzipped
+  unzip -q $archive -d "${archive.baseName}"
   """
 }
 
@@ -34,7 +34,7 @@ process unzip_archive {
 process cat_patients_json {
 
     input: path json_dir
-    output: path 'patients.json'
+    output: path "${json_dir.baseName}.json"
 
     script:
     """
@@ -50,21 +50,20 @@ process cat_patients_json {
             else {print \$0}
         }
         END{print "]"}' \
-    > patients.json
-
+    > "${json_dir.baseName}.json"
     """
 }
 
 
 // Compress triples file
 process gzip_triples {
-    publishDir "data/out", mode: 'copy'
+    publishDir "data/out/triples", mode: 'copy'
 
     input: path triples
-    output: path 'graph.nt.gz'
+    output: path "${triples.name}.gz"
 
     script:
     """
-    gzip -c $triples > graph.nt.gz
+    gzip -c $triples > "${triples.name}.gz"
     """
 }
