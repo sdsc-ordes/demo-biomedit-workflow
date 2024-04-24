@@ -45,7 +45,9 @@ process generate_triples {
     """
     # symlink does not work since the mapping contains
     # relative source paths
-    cp --remove-destination \$(readlink $rml) $rml
+    cp --remove-destination \$(readlink $rml) "$rml"
+    # substitute input file name
+    sed -i 's/rml:source "patients.json"/rml:source "${patients}"/' "$rml"
 
     # rmlstreamer needs absolute paths...
     java -jar /opt/app/RMLStreamer.jar toFile \
