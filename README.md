@@ -80,6 +80,10 @@ By default, the workflow will be executed on each zip file present in the input 
 
 When the option `--listen=true` is provided, the workflow manager will instead listen continuously for filesystem events and trigger execution whenever a new zip file appears in the input directory. In this mode, a log will only be generated when the Nextflow execution is manually interrupted, meaning that the exit code in the log will always be 1.
 
+### Inputs
+
+This repository includes a small set of example data in `data/raw/test_patients.zip`. If you'd like to use a larger dataset as input, we included `scripts/download_data.sh` to retrieve a synthetic dataset from [Synthea](https://github.com/synthetichealth/synthea) and put it directly in the input folder `data/raw/`.
+
 ### Outputs
 
 The `data/out` is structured as follows:
