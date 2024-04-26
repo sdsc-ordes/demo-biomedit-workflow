@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-# Migrate a list of images to a new registry and namespace.
-# The list of images should be provided as a yaml file with one 'name: URI' per line.
+# Migrate a container images listed in input config file to a new registry and namespace.
 set -euo pipefail
 
 usage() {
-	echo -e "Usage: $0 <images.yaml> <new_address>\n"
-	echo "Example: Migrate all images in images.yaml to myregistry.com/my-namespace/<image_name>:<tag>"
-	echo "         $0 images.yaml myregistry.com/my-namespace"
+	echo -e "Usage: $0 containers.conf <new_address>\n"
+	echo "Example: Migrate all images in nextflow config to myregistry.com/my-namespace/<image_name>:<tag>"
+	echo "         $0 conf/containers.conf myregistry.com/my-namespace"
 }
 
 if [ $# -ne 2 ] ||
@@ -19,10 +18,11 @@ fi
 
 
 migrate_img() {
-    local img="${1##*: }"
+    local img="$1"
     local new_path="$2"
     local new_img
 
+    # substitute registry and namespace
     new_img=$(echo "$img" | sed "s#^.*/\([^/]*\)\$#${new_path}/\1#")
     echo "Migrating $img to $new_img"
     podman pull "$img"
@@ -30,6 +30,10 @@ migrate_img() {
     podman push "$new_img"
 }
 
-while read -r img; do
-    migrate_img "$img" "$2"
-done < "$1"
+# loop over container definitions, keeping only unquoted urls
+grep 'container *= *' "$1" \
+| sed -e 's/ +$//' -e 's/.* //' \
+| tr -d \'\" \
+| while read -r img; do
+  migrate_img "$img" "$2"
+done
