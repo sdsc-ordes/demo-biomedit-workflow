@@ -78,7 +78,7 @@ To interact with the workflow for development or production, we use different [N
 
 By default, the workflow will be executed on each zip file present in the input directory.
 
-When the option `--listen=true` is provided, the workflow manager will instead listen continuously for filesystem events and trigger execution whenever a new zip file appears in the input directory.
+When the option `--listen=true` is provided, the workflow manager will instead listen continuously for filesystem events and trigger execution whenever a new zip file appears in the input directory. In this mode, a log will only be generated when the Nextflow execution is manually interrupted, meaning that the exit code in the log will always be 1.
 
 ### Outputs
 
