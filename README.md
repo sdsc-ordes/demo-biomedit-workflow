@@ -70,6 +70,10 @@ To interact with the workflow for development or production, we use different [N
 * `nextflow run -profile standard main.nf`: Run the workflow using the workflow file in the current directory and publicly available containers defined in `conf/containers.yaml`. This is the default profile, and the `-profile` option can therefore be omitted.
 * `nextflow run -profile prod main.nf`: Run the containerized workflow using the latest commit on the repository remote and containers from the private registry.
 
+> [!TIP]
+> A helper script (`scripts/migrate_images.sh`) is provided to automatically migrate images to a custom registry/namespace.
+> It can read container declarations in a nextflow config file and handle the pull/tag/push of images.
+
 ### Execution mode
 
 By default, the workflow will be executed on each zip file present in the input directory.
