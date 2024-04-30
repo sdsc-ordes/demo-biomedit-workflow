@@ -25,11 +25,27 @@ yml_mappings = file(params.yml_mappings)
 ontology = file(params.ontology)
 shapes = file(params.shapes)
 
-include { convert_mappings; generate_triples; validate_shacl } from './modules/rml'
-include { cat_patients_json; gzip_triples} from './modules/utils'
+include {
+  convert_mappings;
+  generate_triples;
+  validate_shacl;
+} from './modules/rml'
+
+include {
+  cat_patients_json;
+  gzip_triples;
+  unzip_archive;
+} from './modules/utils'
 
 workflow {
-    cat_json = cat_patients_json(input_dir)
+    if (params.listen) {
+      ch_input_zip = Channel.watchPath("${params.input_dir}*.zip")
+    }
+    else {
+      ch_input_zip = Channel.fromPath("${params.input_dir}*.zip")
+    }
+    ch_json_dir = unzip_archive(ch_input_zip)
+    cat_json = cat_patients_json(ch_json_dir)
     ttl_mappings = convert_mappings(yml_mappings)
     triples = generate_triples(
         cat_json,

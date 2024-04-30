@@ -16,13 +16,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+// unzip an archive into a directory
+process unzip_archive {
+  input: path archive
+  output: path "${archive.baseName}"
+
+  script:
+  """
+  mkdir unzipped
+  unzip -q $archive -d "${archive.baseName}"
+  """
+}
+
 // This process concatenates all the patients JSON files into a single file:
 // jq version (does not support streaming)
 // jq -n '[inputs]' ${INPUT_DIR}/*json > $OUTPUT_FILE
 process cat_patients_json {
 
     input: path json_dir
-    output: path 'patients.json'
+    output: path "${json_dir.baseName}.json"
 
     script:
     """
@@ -38,21 +50,20 @@ process cat_patients_json {
             else {print \$0}
         }
         END{print "]"}' \
-    > patients.json
-
+    > "${json_dir.baseName}.json"
     """
 }
 
 
 // Compress triples file
 process gzip_triples {
-    publishDir "data/out", mode: 'copy'
+    publishDir "data/out/triples", mode: 'copy'
 
     input: path triples
-    output: path 'graph.nt.gz'
+    output: path "${triples.name}.gz"
 
     script:
     """
-    gzip -c $triples > graph.nt.gz
+    gzip -c $triples > "${triples.name}.gz"
     """
 }

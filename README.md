@@ -10,94 +10,24 @@
 
 ## Context
 
-This repository showcases a containerized workflow to semantize synthetic patient data using the SPHN framework.
+This repository showcases a simple containerized workflow to semantize synthetic patient data using the SPHN framework.
 It is designed to run on biomedical systems with the following restrictions:
 
 * No internet acccess besides a private container registry
-* Only `podman` available
+* Only `podman` and nextflow available
 * No root access
 * keep data provenance information separate from the git repository
 
 ## Containerized workflow
 
-The project is structured to run entirely inside podman with modular containers.
-The main workflow uses Nextflow with podman where each workflow task is run in its own (single-program) container.
+The project is structured to run individual tasks in their own podman container. Nextflow is used as the workflow manager and event-based workflow executor.
 
-The repository is mounted in the Nextflow container, and Nextflow is responsible for managing the containers and mounting the volume for each task. This modular layout, allows to easily reuse task containers across projects (as opposed to building a single container with nextflow and all dependencies for each project).
-
-
-```mermaid
-        C4Context
-      title Containerized workflow architecture
-
-      Boundary(l1, "Local", "Local env with podman and Nextflow") {
-        Person(Dev, "User", "dev run")
-        System(NextflowLoc, "Nextflow", "Nextflow workflow system.")
-      }
-      Boundary(loc1, "Task 1 container", "Public CONTAINER") {
-          System(Software1pub, "yarrrml-parser")
-      }
-
-      Boundary(loc2, "Task 2 container", "Public CONTAINER") {
-          System(Software2pub, "rmlstreamer")
-        }
-
-      Boundary(loc3, "Task 3 container", "Public CONTAINER") {
-          System(Software3pub, "pyshacl")
-        }
-      Boundary(b0, "BioMedIT", "SERVER with podman and Nextflow") {
-        Person(User, "User", "prod run")
-
-          System(Nextflow, "Nextflow", "Nextflow workflow system.")
-
-        Boundary(t1, "Task 1 container", "Harbor CONTAINER") {
-          System(Software1, "yarrrml-parser")
-        }
-
-        Boundary(t2, "Task 2 container", "Harbor CONTAINER") {
-          System(Software2, "rmlstreamer")
-        }
-
-        Boundary(t3, "Task 3 container", "Harbor CONTAINER") {
-          System(Software3, "pyshacl")
-        }
-
-      }
-
-      UpdateLayoutConfig($c4ShapeInRow="1", $c4BoundaryInRow="1")
-
-      Rel(User, Nextflow, "calls")
-      Rel(Nextflow, Software1, "calls")
-      Rel(Nextflow, Software2, "calls")
-      Rel(Nextflow, Software3, "calls")
-
-      Rel(Dev, NextflowLoc, "calls")
-      Rel(NextflowLoc, Software1pub, "calls")
-      Rel(NextflowLoc, Software2pub, "calls")
-      Rel(NextflowLoc, Software3pub, "calls")
-
-      UpdateRelStyle(User, Nextflow, $textColor="red", $lineColor="red")
-      UpdateRelStyle(Nextflow, Software1, $textColor="red", $lineColor="red")
-      UpdateRelStyle(Nextflow, Software2, $textColor="red", $lineColor="red")
-      UpdateRelStyle(Nextflow, Software3, $textColor="red", $lineColor="red")
-
-      UpdateRelStyle(Dev, NextflowLoc, $textColor="red", $lineColor="red")
-      UpdateRelStyle(NextflowLoc, Software1pub, $textColor="red", $lineColor="red")
-      UpdateRelStyle(NextflowLoc, Software2pub, $textColor="red", $lineColor="red")
-      UpdateRelStyle(NextflowLoc, Software3pub, $textColor="red", $lineColor="red")
-
-
-      UpdateRelStyle(Nextflow, User, $textColor="red", $lineColor="red")
-
-      UpdateLayoutConfig($c4ShapeInRow="5", $c4BoundaryInRow="4")
-
-```
 
 ## Workflow description
 
-The workflow processes simulated patient data from synthea in JSON format and generates an RDF graph describing patient healthcare appointments (patient, dates and institution). It then validates the resulting graph. The workflow also produces an interoperable `log` file in JSON-LD format.
+The workflow processes simulated patient data from synthea in JSON format and generates an RDF graph describing patient healthcare appointments (patient, dates and institution). It then validates the resulting graph. In addition to nextflow's native logging capabilities, the workflow produces an interoperable semantic `log` in JSON-LD format for traceability.
 
-The data is semantized using the [SPHN ontology](https://www.biomedit.ch/rdf/sphn-ontology). Mapping rules are defined in human readable [YARRRML format](https://rml.io/yarrrml/) (see [data/mappings.yml](data/mappings.yml)). The triples are materialized using containerized tools from [rml.io](https://rml.io). The graph validation is done using [pySHACL](https://github.com/RDFLib/pySHACL) with the [SPHN shacl shapes](https://git.dcc.sib.swiss/sphn-semantic-framework/sphn-shacl-generator). The interoperable `log` is defined in `conf/log.conf` and is obtained by formatting [Nextflow's log](https://www.nextflow.io/docs/latest/tracing.html) using [JSON-LD](https://json-ld.org/) format.
+The data is semantized using the [SPHN ontology](https://www.biomedit.ch/rdf/sphn-ontology). Mapping rules are defined in human readable [YARRRML format](https://rml.io/yarrrml/) (see [data/mappings.yml](data/mappings.yml)). The triples are materialized using containerized tools from [rml.io](https://rml.io). The graph validation is done using [pySHACL](https://github.com/RDFLib/pySHACL) with the [SPHN shacl shapes](https://git.dcc.sib.swiss/sphn-semantic-framework/sphn-shacl-generator). An interoperable log is defined in `conf/log.conf` and is obtained by formatting [Nextflow's log](https://www.nextflow.io/docs/latest/tracing.html) using [JSON-LD](https://json-ld.org/) format.
 
 The workflow definition can be found in [main.nf](main.nf) and its configuration in [nextflow.config](nextflow.config).
 
@@ -133,11 +63,46 @@ First clone the repository and move into the folder:
 `git clone https://github.com/SDSC-ORD/demo_biomedit_workflow.git && cd demo_biomedit_workflow`
 
 
+### Profiles
+
 To interact with the workflow for development or production, we use different [Nextflow profiles](https://www.nextflow.io/docs/latest/config.html#config-profiles) as follows:
 
+* `nextflow run -profile standard main.nf`: Run the workflow using the workflow file in the current directory and publicly available containers defined in `conf/containers.yaml`. This is the default profile, and the `-profile` option can therefore be omitted.
 * `nextflow run -profile prod main.nf`: Run the containerized workflow using the latest commit on the repository remote and containers from the private registry.
-* `nextflow run -profile dev main.nf`: Run the containerized workflow using the workflow file in the current directory and publicly available containers defined in `conf/containers.yaml`.
 
+> [!TIP]
+> A helper script (`scripts/migrate_images.sh`) is provided to automatically migrate images to a custom registry/namespace.
+> It can read container declarations in a nextflow config file and handle the pull/tag/push of images.
+
+### Execution mode
+
+By default, the workflow will be executed on each zip file present in the input directory.
+
+When the option `--listen=true` is provided, the workflow manager will instead listen continuously for filesystem events and trigger execution whenever a new zip file appears in the input directory. In this mode, a log will only be generated when the Nextflow execution is manually interrupted, meaning that the exit code in the log will always be 1.
+
+### Inputs
+
+This repository includes a small set of example data in `data/raw/test_patients.zip`. If you'd like to use a larger dataset as input, we included `scripts/download_data.sh` to retrieve a synthetic dataset from [Synthea](https://github.com/synthetichealth/synthea) and put it directly in the input folder `data/raw/`.
+
+### Outputs
+
+The `data/out` is structured as follows:
+
+```
+data/out
+├── logs
+│   └── 2024-04-24T11:32:52.980140+02:00_infallible_kilby_logs.json
+├── reports
+│   ├── test_patients_1_report.ttl
+│   └── test_patients_2_report.ttl
+└── triples
+    ├── test_patients_1.nt.gz
+    └── test_patients_2.nt.gz
+```
+
+Where `triples` contains the semantized data for each input archive, and `reports` contains the shacl validation report, indicating any violation of the schema constraints.
+
+For each workflow run, a time-stamped log file with a unique name is also saved in `logs`.
 
 ## License
 

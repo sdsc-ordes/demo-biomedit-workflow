@@ -17,8 +17,9 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Convert human-readable yarrrml mappings to machine-readable ttl
+
 process convert_mappings {
-    container "container-registry.dcc.sib.swiss/nds-lucid/yarrrml-parser:1.3.6"
+    container "nds-lucid/yarrrml-parser:1.3.6"
 
     input: path yml_mappings
     output: path 'mappings.rml.ttl'
@@ -31,34 +32,36 @@ process convert_mappings {
 
 // Use mappings to create patients RDF graph from json file
 process generate_triples {
-    container "container-registry.dcc.sib.swiss/nds-lucid/rmlstreamer:2.4.1"
+    container "nds-lucid/rmlstreamer:2.4.1"
 
     input:
     path patients
     path rml
 
     output:
-    path 'graph.nt'
+    path "${patients.baseName}.nt"
 
     script:
     """
     # symlink does not work since the mapping contains
     # relative source paths
-    cp --remove-destination \$(readlink $rml) $rml
+    cp --remove-destination \$(readlink $rml) "$rml"
+    # substitute input file name
+    sed -i 's/rml:source "patients.json"/rml:source "${patients}"/' "$rml"
 
     # rmlstreamer needs absolute paths...
     java -jar /opt/app/RMLStreamer.jar toFile \
         -m \${PWD}/$rml \
         -o \${PWD}/patients_graph
 
-    cat patients_graph/* | sort -u > graph.nt
+    cat patients_graph/* | sort -u > "${patients.baseName}.nt"
     """
 }
 
 // Validate data graph using SPHN shacl shapes
 process validate_shacl {
-    container "container-registry.dcc.sib.swiss/nds-lucid/pyshacl:0.20.0"
-    publishDir "data/out", mode: 'copy'
+    container "nds-lucid/pyshacl:0.20.0"
+    publishDir "data/out/reports", mode: 'copy'
 
     input:
     path data
@@ -66,11 +69,15 @@ process validate_shacl {
     path shapes
 
     output:
-    path 'report.ttl'
+    path "${data.simpleName}_report.ttl"
 
     script:
     """
-    pyshacl -s $shapes -e $ontology $data > 'report.ttl'
+    pyshacl \
+      -s $shapes \
+      -e $ontology \
+      $data \
+    > "${data.simpleName}_report.ttl"
     """
 }
 
